@@ -1,0 +1,19 @@
+﻿@rendermode InteractiveServer
+
+<h3>Two Way Binding</h3>
+
+<br />
+
+<label for="nameInput">Defina uma classe Css</label>
+<input id="nameInput" @bind="classe" @bind:event="oninput" />
+<br />
+
+<p>A classe definida é :@classe</p>
+
+<a class="@classe" href="#">UM Simples Link</a>
+
+
+@code {
+    string classe = "";
+}
+

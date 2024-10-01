@@ -1,0 +1,311 @@
+BLAZOR ESTUDOS
+
+Modelos
+
+* Web Assembly(web)
+* Server(web)
+* Hybrid (desktop/ mobile)
+* Mobile Blazor Bindings
+
+MODOS DE RENDERIZAÇÃO
+
+SSR Server Side Rendering
+- Renderização no lado do servidor
+
+Renderização de Stream
+- Meio termo entre a renderização no servidor e no cliente
+
+Server
+- Componente é pré renderizado no servidor e em seguida seguida
+se torna interativo no cliente 
+usando Signal R
+
+Web Assembly
+- Derivado do modelo web assembly e aproveita recursos do lado do cliente
+permitindo a execução de código c# no navegador
+
+Automático
+- Carrega os componente usando o modo servidor , carrega os assets para o cliente
+e depois usa o modo Assembly.
+
+---------------------------------------------
+BLAZOR SERVER
+ 
+ - Os componentes são processados no servidor a partir de um
+ app Aspnet core 
+
+ - As atualizações da interface são  feitas pelos SignalR (via socket)
+
+Vantagem
+* tamanho menor de download para as aplicações
+* aplicação aproveita o máximo de recursos do Aspnet
+* todas as ferramentas dos aspnet core funcionam na aplicação(Depuração)
+* suporte para navegadores leves
+* a base de código não é entregue ao Browser
+
+Limitações
+*Alta latencia.Sempre está conectado
+*sem suporte para uso offline
+*Escalar aplicações requerem muitos recursos do servidor devido ao uso de websocket
+*Um servidor aspnet core é necessário para rodar a aplicação.
+
+
+**Em prod é recomendando usar o Azure SignalR Service
+------------------------------------------------------------
+BLAZOR WEB ASSEMBLY 
+
+- executa componentes do lado do cliente no navegador em um runtime .net com base no web assembly
+
+Vantagem 
+* não existe dependencia do lado do servidor depois q a app é baixada do servidor , ela se mantém funcional
+* os recursos e capacidades do cliente são totalmente aproveitados
+* a app trabalha no client-side desconectada de um servidor
+* não é obrigatório ter um server aspnet para hospedagem, pode ser usado um cdn
+
+Limitações
+* os componentes razor são restritos as capacidades do navegador
+* é necessário que o browser tenha acesso a web assembly
+* o tamanho do download é maior e os componentes demoram mais para carregar (1 vez)
+* o código enviado ao cliente não pode ser protegido contra inspeção e adulteração pelos usuários
+* não é recomendado usar dados sigilosos nos componentes WASM para isso deve-se utilizar uma api ou trabalhar no modo auto com client e server juntos
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+QUAL PROJETO ESCOLHER
+
+Blazor web App -> Template padrão. Mix de todas as melhorias 
+Entrega 2 projetos, Server e Assembly
+
+Blazor Web Assembly Standalone App -> Entrega somente um projeto web assembly.Aplicações SPA
+
+Blazor Web Assembly Empty -> Template igual acima só que vazio
+
+Blazor Server APP -> Apenas projeto do blazor server
+
+Blazor Server APP Empty-> Projeto de server Vazio.
+
+CRIANDO VIA LINHA DE COMANDO 
+
+-> dotnet new list (Listar templates)
+-> dotnet new  tipo_template 
+----------------------------------------------------------------------------------------------------------
+RAZOR 
+
+-> Processador de html no servidor
+-------------------------------------------------------------------------------------------------------------------
+LAYOUTS
+
+App.Razor => Estrutura Html e Roteamento
+MainLayout.Razor => Formato do Layout(Menu,navegação ,etc)
+NavMenu.Razor => Estrutura de menu lateral
+@Body => Local onde os componentes são renderizados
+
+----------------------------------------------------------------------------------------------------------------------------
+COMPONENTES
+
+top-down
+* Definição de diretivas
+* codigo html
+* codigo razor (interação com c#)
+* código c#
+
+Organização
+
+Contato
+Contato.Razor
+Contato.Css
+Service.cs
+----------------------------------------------------------------------------------------------------------------------------
+PRINCIPAIS DIRETIVAS 
+
+@page => Indica que o componente é uma página e pode ser acessado por uma rota.
+
+EX:@page "/minha-pagina"
+****************************************************************************
+@code => Define um bloco de código c#. Fica no final do arquivo
+
+EX: @code{ string teste="ola"}
+****************************************************************************
+@inject => Permite a injeção de dependencia em componentes Razor fornecendo acessos a serviços configurados no container de DI.
+****************************************************************************
+EX: @inject ILogger<object>Logger
+****************************************************************************
+@implements => Especifica que o componente implementa uma interface c#
+
+Ex: @implements IDisposable
+****************************************************************************
+@inherits => Indica que o componente herda de uma classe base c#
+
+EX: @inherits LayoutComponentBase
+****************************************************************************
+@layout => Especifica um layout que deve ser usado pelo componente
+
+EX: @layout MeuLayout
+****************************************************************************
+@typeparam => Define um tipo genérico para um componente razor
+
+EX: @typeparam TItem 
+****************************************************************************
+@attribute => Adiciona um atributo a um componente ou diretiva em tempo de compilação
+
+EX: @attribute [Authorize]
+****************************************************************************
+@key => Ajuda o Blazor a diferenciar elementos ou componentes individuais durante o processo de renderização.
+
+EX: <li @key="item.Id">@item.Name</li>
+
+****************************************************************************
+@ref => Cria uma referencia a um elemento do DOM ou instancia de componente para ser acessado no C#.
+
+EX: <MeuCompoente @ref="meuComponenteRef"/>
+****************************************************************************
+@bind => Cria uma ligação de duas vias entre um elemento de formulario e uma propridade c#
+
+EX:<input @bind="meuTexto"/>
+
+****************************************************************************
+@bind-Value:Event => Especifica o evento usado para acionar a atualização do valor em uma ligação de dados de 2 vias.
+
+EX:<input @bind-Value="meuTexto" @bind-Value:event:"oninput"/>
+****************************************************************************
+--------------------------------------------------------------------------------------------------------
+RENDER MODES 
+
+SSR-ESTÁTICO
+-> o servidor manipula o componente 
+-> Não altera estado com eventos
+
+SSR-INTERACTIVE
+-> O evento altera o estado do componente 
+
+COMPONENT PRERENDER 
+
+-> Pré processa o componente no service sem dados e manda 
+uma prévia do componente para a tela.
+
+OnInitializeAsync => Evento que é disparado sempre que o o componente é inicializado.
+--------------------------------------------------------------------------------------------------------
+STREAM RENDERING
+
+-> Atributo para dar poder de pré renderização ao componente.
+
+@attribute [StreamRendering]
+--------------------------------------------------------------------------------------------------------
+PARAMETRIZAÇÃO DE COMPONENTES
+
+-> usar o decorador [Parameter] em cima da propriedade criada no code behind
+
+[Parameter]
+public string Titulo{get;set;}
+
+EX:
+<MeuCompoente Titulo="TEste"/>
+--------------------------------------------------------------------------------------------------------
+HERANÇA DE COMPONENTES
+
+-> @inherits diretiva de herança 
+--------------------------------------------------------------------------------------------------------
+RENDER FRAGMENT 
+
+-> Delega o trecho html q vai ser embutido no componente
+-> Serve para construir um componente que espera conteudos para ser executado
+--------------------------------------------------------------------------------------------------------
+CICLO DE VIDA DO COMPONENTES
+
+CREATE INSTANCE
+PROPERTY INJECTION
+
+INICIALIZAÇÃO DO COMPONENTE
+OnInitializeAsync()
+
+INICIALIZAÇÃO DE PARÂMETROS
+OnParametersSet()
+
+EXECUÇÃO DE EVENTOS NO DOM 
+Run Event handler()
+
+RENDERIZAÇÃO NO CLIENT 
+OnAfterRenderAsync()
+-------------------------------------------------------------------------------------------------
+ROTEAMENTO 
+
+DIRETIVA @page
+
+@page "/meu-componente
+******************************************************************************
+ROTAS PARAMETRIZADAS
+
+@page "/meu-componente/{Id:int}"
+
+[Parameter]
+public int Id{get;set;}
+
+para usar o parâmetro na tela 
+usar o método OnParametersSetAsync()
+******************************************************************************
+RESTRIÇÕES DE ROTAS 
+
+@page "/meu-componente/{Id:int}"
+
+Route Contraints
+
+bool {active:bool}
+datetime {dob:datetime}
+decimal {price:decimal}
+double {weight:double}
+float {weight:float}
+guid{id:guid}
+int {id:int}
+long{ticks:long}
+
+******************************************************************************
+
+NAVLINK
+
+=> o Navlink é um substituto do <a> com mais recursos.
+
+NavLinkMatch.All
+=> Ativa um link após um click quando a rota for completa
+
+NavLinkMatch.Prefix
+=> Ativa um link após um click quando a rota mesmo sem ser a rota completa
+
+******************************************************************************
+NAVIGATION MANAGER
+
+@inject NavigationManager Navigation 
+
+=>Direciona para uma rota dentro de um componente.
+--------------------------------------------------------------------------------------
+FORMULÁRIOS E VALIDAÇÕES
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

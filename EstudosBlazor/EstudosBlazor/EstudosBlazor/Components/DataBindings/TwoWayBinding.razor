@@ -1,0 +1,19 @@
+﻿@rendermode InteractiveServer
+
+<h3>EventBinding</h3>
+
+<br />
+
+<button class="btn btn-primary" @onclick="ProcessarMensagem">Clique Aqui</button>
+
+<br />
+
+@code {
+    string mensagem = " Nenhum clique ainda";
+
+    void ProcessarMensagem()
+    {
+        mensagem = $"Botão clicado em: {DateTime.Now.ToString("HH:mm:ss")}";
+    }
+}
+
